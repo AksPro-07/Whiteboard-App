@@ -1,0 +1,100 @@
+.container {
+  @apply min-h-screen p-8 bg-gray-100 flex flex-col items-center;
+}
+
+.heading {
+  @apply text-4xl font-bold mt-2;
+}
+
+.subheading {
+  @apply text-lg text-gray-600 mt-8 flex justify-between gap-4 w-full max-w-3xl;
+}
+
+.createButton {
+  @apply px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition;
+}
+
+.canvasList {
+  @apply w-full max-w-3xl space-y-4 mt-4;
+}
+
+.canvasCard {
+  @apply flex justify-between items-start p-4 bg-white rounded shadow hover:shadow-md transition;
+}
+
+.canvasInfo {
+  @apply cursor-pointer w-full;
+}
+
+.canvasName {
+  @apply text-xl font-semibold text-blue-700 mb-1;
+}
+
+.canvasTimeInfo {
+  @apply text-sm text-gray-500 flex flex-col md:flex-row gap-2 md:gap-16;
+}
+
+.deleteButton {
+  @apply px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition;
+}
+
+.loadingContainer {
+  @apply flex items-center justify-center h-screen bg-gray-100;
+}
+
+.loadingText {
+  @apply text-xl text-gray-600;
+}
+
+.modalOverlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.modal {
+  @apply bg-white p-6 rounded-lg shadow-lg w-80;
+}
+
+.modalTitle {
+  @apply text-lg font-semibold mb-4;
+}
+
+.modalInput {
+  @apply w-full px-3 py-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.modalActions {
+  @apply flex justify-end space-x-2;
+}
+
+.modalSubmit {
+  @apply bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700;
+}
+
+.modalCancel {
+  @apply bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400;
+}
+
+.noCanvasText {
+  @apply text-center text-gray-500 text-sm mt-10;
+}
+
+.logoutButton {
+  @apply absolute top-5 right-8 px-4 py-2 bg-red-500 text-white rounded-md font-medium hover:bg-red-700 transition;
+}
+
+.shareButton {
+  @apply px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition;
+}
+
+.shareStatusText {
+  @apply mt-3 text-sm text-gray-700;
+}
+
+.buttonGroup {
+  @apply flex gap-2 mt-2;
+}
+
+.statusMessage {
+  @apply mt-3 text-sm text-gray-700 text-center;
+}
+

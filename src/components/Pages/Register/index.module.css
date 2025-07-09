@@ -1,0 +1,27 @@
+.container {
+  @apply flex flex-col items-center justify-center min-h-screen bg-gray-100;
+}
+
+.heading {
+  @apply text-2xl font-semibold mb-6;
+}
+
+.form {
+  @apply flex flex-col w-80 p-6 bg-white rounded-lg shadow-md;
+}
+
+.input {
+  @apply mb-3 px-4 py-2 border border-gray-300 rounded outline-none focus:ring-2 focus:ring-blue-400;
+}
+
+.button {
+  @apply px-4 py-2 bg-green-600 text-white rounded cursor-pointer hover:bg-green-700 transition-all;
+}
+
+.link {
+  @apply mt-4 text-sm text-gray-600;
+}
+
+.linkText {
+  @apply text-blue-600 hover:underline;
+}

@@ -1,0 +1,7 @@
+  .loadingContainer {
+    @apply flex items-center justify-center h-screen bg-gray-100;
+  }
+  
+  .loadingText {
+    @apply text-xl text-gray-600;
+  }

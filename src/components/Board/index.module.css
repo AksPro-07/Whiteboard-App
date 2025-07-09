@@ -1,0 +1,7 @@
+.textElementBox {
+  @apply fixed border-none bg-transparent resize-none outline-none p-0 m-0 overflow-hidden text-[inherit];
+  font-family: "Caveat", cursive;
+  width: auto;
+  height: auto;
+  line-height: inherit; /* plain CSS since Tailwind doesn't support this */
+}
