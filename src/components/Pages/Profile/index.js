@@ -211,10 +211,10 @@ const Profile = () => {
               <div className={classes.canvasInfo} onClick={() => handleOpenCanvas(canvas.uuid)}>
                 <p className={classes.canvasName}>{canvas.name}</p>
                 <div className={classes.canvasTimeInfo}>
-                  <div>
+                  <div className={classes.timeStamp}>
                     Updated At : {new Date(canvas.updatedAt).toLocaleString()}
                   </div>
-                  <div>
+                  <div className={classes.timeStamp}>
                     Created On : {new Date(canvas.createdAt).toLocaleString()}
                   </div>
                 </div>

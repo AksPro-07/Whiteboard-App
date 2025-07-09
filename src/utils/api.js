@@ -23,7 +23,6 @@ export const updateCanvas = async (uuid, elements) => {
     }
 
     const data = await response.json();
-    console.log('Canvas updated successfully:', data);
   } catch (err) {
     console.error('Update failed:', err.message);
   }

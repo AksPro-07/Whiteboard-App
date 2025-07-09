@@ -3,6 +3,9 @@ import { BOARD_ACTIONS, TOOL_ACTION_TYPES, TOOL_ITEMS } from '../components/cons
 import boardContext from './board-context';
 import { createElement, getSvgPathFromStroke, isPointNearElement } from '../utils/element';
 import getStroke from 'perfect-freehand';
+import { useEffect } from "react";
+import { getSocket } from "../utils/socket";
+
 
 // Reducer function to manage the board state
 const boardReducer = (state, action) => {
@@ -143,17 +146,17 @@ const boardReducer = (state, action) => {
                 index: nextIndex,
                 toolActionType: TOOL_ACTION_TYPES.NONE
             }
-            case BOARD_ACTIONS.SET_INITIAL_ELEMENTS:
-                {
-                    const { elements } = action.payload;
-                    return {
-                        ...state,
-                        elements: [...elements],
-                        history: [ [...elements] ],
-                        index: 0
-                    };
-                }
-                
+        case BOARD_ACTIONS.SET_INITIAL_ELEMENTS:
+            {
+                const { elements } = action.payload;
+                return {
+                    ...state,
+                    elements: [...elements],
+                    history: [[...elements]],
+                    index: 0
+                };
+            }
+
 
 
         default:
@@ -170,14 +173,39 @@ const initialBoardState = {
     index: 0
 }
 
-const BoardProvider = ({ children, initialElements = []}) => {
+const BoardProvider = ({ children, initialElements = [] }) => {
 
     // Use the useReducer hook to manage the board state
     const [boardState, dispatchBoardAction] = useReducer(boardReducer, {
         ...initialBoardState,
         elements: [...initialElements],
-        history: [ [...initialElements] ],
+        history: [[...initialElements]],
     });
+
+    const emitDrawingUpdate = useCallback((elements) => {
+        const socket = getSocket();
+        if (!socket) return;
+
+        const canvasId = window.location.pathname.split("/").pop(); // Get uuid from URL
+        socket.emit("drawingUpdate", { canvasId, elements });
+    }, []);
+
+    useEffect(() => {
+        const socket = getSocket();
+        if (!socket) return;
+
+        socket.on("receiveDrawingUpdate", (updatedElements) => {
+            dispatchBoardAction({
+                type: BOARD_ACTIONS.SET_INITIAL_ELEMENTS,
+                payload: { elements: updatedElements }
+            });
+        });
+
+        return () => {
+            socket.off("receiveDrawingUpdate");
+        };
+    }, []);
+
 
     // Function to handle tool item click
     const toolChangeHandler = (toolItem) => {
@@ -251,6 +279,15 @@ const BoardProvider = ({ children, initialElements = []}) => {
                 type: BOARD_ACTIONS.DRAW_UP
             });
         }
+        const socket = getSocket();
+        if (socket) {
+            const canvasId = window.location.pathname.split("/").pop(); // extracting uuid
+            socket.emit("drawingUpdate", {
+                canvasId,
+                elements: boardState.elements
+            });
+        }
+
         dispatchBoardAction({
             type: BOARD_ACTIONS.CHANGE_ACTION_TYPE,
             payload: {
@@ -272,21 +309,33 @@ const BoardProvider = ({ children, initialElements = []}) => {
         dispatchBoardAction({
             type: BOARD_ACTIONS.UNDO
         });
-    }, []);
+
+        // Emit updated state
+        const newIndex = boardState.index - 1;
+        if (newIndex >= 0) {
+            emitDrawingUpdate(boardState.history[newIndex]);
+        }
+    }, [boardState.history, boardState.index, emitDrawingUpdate]);
 
     const boardRedoHandler = useCallback(() => {
         dispatchBoardAction({
             type: BOARD_ACTIONS.REDO
         });
-    }, []);
+
+        // Emit updated state
+        const newIndex = boardState.index + 1;
+        if (newIndex < boardState.history.length) {
+            emitDrawingUpdate(boardState.history[newIndex]);
+        }
+    }, [boardState.history, boardState.index, emitDrawingUpdate]);
 
     const setInitialElements = useCallback((elements) => {
         dispatchBoardAction({
-          type: BOARD_ACTIONS.SET_INITIAL_ELEMENTS,
-          payload: { elements }
+            type: BOARD_ACTIONS.SET_INITIAL_ELEMENTS,
+            payload: { elements }
         });
-      }, []);
-      
+    }, []);
+
 
     // Create the context value to be provided to the children components
     const boardContextValue = {

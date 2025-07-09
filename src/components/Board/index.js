@@ -5,9 +5,10 @@ import toolboxContext from "../../store/toolbox-context";
 import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../constants";
 import classes from "./index.module.css";
 import { useParams } from "react-router-dom";
-import { updateCanvas } from "../../utils/api";
 import { getSvgPathFromStroke } from "../../utils/element";
 import getStroke from "perfect-freehand";
+import { connectSocket } from "../../utils/socket";
+
 
 
 const Board = () => {
@@ -24,103 +25,63 @@ const Board = () => {
     const canvas = canvasRef.current;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    const token = localStorage.getItem('whiteboard_user_token');
+    const socket = connectSocket(token);
+  
+    socket.on("connect", () => {
+      socket.emit("joinCanvas", { canvasId: uuid })
+    });
 
-  }, []);
+  }, [uuid]);
 
+  const drawElements = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // always start fresh
+    ctx.save();
+  
+    const roughCanvas = rough.canvas(canvas);
+  
+    elements.forEach((element) => {
+      switch (element.type) {
+        case TOOL_ITEMS.LINE:
+        case TOOL_ITEMS.RECTANGLE:
+        case TOOL_ITEMS.CIRCLE:
+        case TOOL_ITEMS.ARROW:
+          roughCanvas.draw(element.roughEle);
+          break;
+        case TOOL_ITEMS.BRUSH:
+          const strokeOptions = {
+            size: element.size,
+            thinning: 0.5,
+            smoothing: 0.5,
+            streamline: 0.5,
+            simulatePressure: true
+          };
+          ctx.fillStyle = element.strokeColor;
+          const brushPath = new Path2D(getSvgPathFromStroke(getStroke(element.points, strokeOptions)));
+          ctx.fill(brushPath);
+          break;
+        case TOOL_ITEMS.TEXT:
+          ctx.textBaseline = "top";
+          ctx.font = `${element.size}px Caveat`;
+          ctx.fillStyle = element.strokeColor;
+          ctx.fillText(element.text, element.x1, element.y1);
+          break;
+        default:
+          throw new Error("Type not recognized");
+      }
+    });
+  
+    ctx.restore();
+  };
+  
   useLayoutEffect(() => {
-
-    // Clear the canvas and draw elements
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.save();
-
-    const roughCanvas = rough.canvas(canvas);
-
-    elements.forEach((element) => {
-      switch (element.type) {
-        case TOOL_ITEMS.LINE:
-        case TOOL_ITEMS.RECTANGLE:
-        case TOOL_ITEMS.CIRCLE:
-        case TOOL_ITEMS.ARROW:
-          roughCanvas.draw(element.roughEle);
-          break;
-        case TOOL_ITEMS.BRUSH:
-          const strokeOptions = {
-            size: element.size,
-            thinning: 0.5,
-            smoothing: 0.5,
-            streamline: 0.5,
-            simulatePressure: true
-          };
-          ctx.fillStyle = element.strokeColor;
-          const brushPath = element.path ? element.path : new Path2D(getSvgPathFromStroke(getStroke(element.points, strokeOptions)));
-          ctx.fill(brushPath);
-          ctx.restore();
-          break;
-        case TOOL_ITEMS.TEXT:
-          ctx.textBaseline = "top";
-          ctx.font = `${element.size}px Caveat`;
-          ctx.fillStyle = element.strokeColor;
-          ctx.fillText(element.text, element.x1, element.y1);
-          ctx.restore();
-          break;
-        default:
-          throw new Error("Type not recognized");
-      }
-    });
-
-    return () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    drawElements();
   }, [elements]);
-
+  
   useEffect(() => {
-
-    // Clear the canvas and draw elements
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.save();
-
-    const roughCanvas = rough.canvas(canvas);
-
-    elements.forEach((element) => {
-      
-      console.log(elements);
-      switch (element.type) {
-        case TOOL_ITEMS.LINE:
-        case TOOL_ITEMS.RECTANGLE:
-        case TOOL_ITEMS.CIRCLE:
-        case TOOL_ITEMS.ARROW:
-          roughCanvas.draw(element.roughEle);
-          break;
-        case TOOL_ITEMS.BRUSH:
-          const strokeOptions = {
-            size: element.size,
-            thinning: 0.5,
-            smoothing: 0.5,
-            streamline: 0.5,
-            simulatePressure: true
-          };
-          ctx.fillStyle = element.strokeColor;
-          const brushPath = element.path ? element.path : new Path2D(getSvgPathFromStroke(getStroke(element.points, strokeOptions)));
-          ctx.fill(brushPath);
-          ctx.restore();
-          break;
-        case TOOL_ITEMS.TEXT:
-          ctx.textBaseline = "top";
-          ctx.font = `${element.size}px Caveat`;
-          ctx.fillStyle = element.strokeColor;
-          ctx.fillText(element.text, element.x1, element.y1);
-          ctx.restore();
-          break;
-        default:
-          throw new Error("Type not recognized");
-      }
-    });
-
-    return () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    drawElements(); // initial mount
   }, []);
 
 
@@ -161,7 +122,7 @@ const Board = () => {
 
   const handleBoardMouseUp = (event) => {
     boardMouseUpHandler(event);
-    updateCanvas(uuid, elements);
+    // updateCanvas(uuid, elements);
   };
 
   return (
