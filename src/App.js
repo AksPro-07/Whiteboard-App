@@ -4,6 +4,7 @@ import Register from "./components/Pages/Register";
 import Welcome from './components/Pages/Welcome';
 import Profile from './components/Pages/Profile';
 import CanvasLoader from './components/Pages/CanvasLoader';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
+        <SpeedInsights />
       </Router>
 
   );
