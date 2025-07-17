@@ -84,6 +84,9 @@ const Login = () => {
           Register here
         </Link>
       </p>
+      <footer className={classes.footer}>
+        Developed by Akshit Meena
+      </footer>
     </div>
   );
 };

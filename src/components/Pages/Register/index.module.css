@@ -25,3 +25,7 @@
 .linkText {
   @apply text-blue-600 hover:underline;
 }
+
+.footer {
+  @apply text-center text-sm text-gray-500 mt-8 pt-4 border-t border-gray-200;
+}

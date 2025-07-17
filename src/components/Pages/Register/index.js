@@ -23,7 +23,7 @@ const Register = () => {
       const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name : username, email, password }),
+        body: JSON.stringify({ name: username, email, password }),
       });
 
       const data = await response.json();
@@ -86,6 +86,9 @@ const Register = () => {
           Login here
         </Link>
       </p>
+      <footer className={classes.footer}>
+        Developed by Akshit Meena
+      </footer>
     </div>
   );
 };

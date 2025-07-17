@@ -18,6 +18,9 @@ export default function Welcome() {
           Register
         </button>
       </div>
+      <footer className={cx(styles.footer)}>
+        Developed by Akshit Meena
+      </footer>
     </div>
   );
 }

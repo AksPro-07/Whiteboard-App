@@ -227,6 +227,20 @@ const Profile = () => {
           ))
         )}
       </div>
+      <footer className={classes.footer}>
+        <div>Developed by Akshit Meena</div>
+        <div>
+          For queries, suggestions, or collaboration opportunities:{' '}
+          <a
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=aksprofficials1.1@gmail.com&su=Whiteboard%20App%20Query&body=Hi%20Akshit%2C%0A%0AI%20have%20a%20question%20regarding%20your%20app..."
+            target="_blank"
+            rel="noopener noreferrer"
+            className={classes.linkText}
+          >
+            aksprofficials1.1@gmail.com
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };
